@@ -1,0 +1,2 @@
+javac -d ./Client/exec/ ./Client/*.java
+java -cp Client/exec/ Main
