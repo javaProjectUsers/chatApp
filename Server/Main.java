@@ -16,6 +16,7 @@ public class Main {
                 System.out.println("connection accepted...");
                 ServerWorker worker = new ServerWorker(clientSocket);
                 worker.start();
+                // serverSocket.close();
             }
         } catch (IOException io) {
             io.printStackTrace();
