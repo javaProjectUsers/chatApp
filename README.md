@@ -3,10 +3,12 @@
 
 # few commands: 
 (in home directory)
-    bash server          - to run and execute chat server
-
-    bash client           - to run and execute chat client
-
+```
+    bash serverRun          - to run and execute chat server
+```
+```
+    bash clientRun           - to run and execute chat client
+```
 
 # Team Notes:
     Create all your java classes (files) in the designated place do not compile them on your own 
