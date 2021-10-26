@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ServerWorker extends Thread {
     public final Socket clientSocket;
-    private String username;
+    private String username = null;
     private final ServerBase server;
     private OutputStream out;
 
@@ -68,10 +68,20 @@ public class ServerWorker extends Thread {
                     this.username = username;
                     System.out.println("User has logged in: " + username);
 
-                    String onlineMessage = username + " is online ";
                     List<ServerWorker> workerList = server.getUserList();
                     for(ServerWorker worker : workerList){
-                        worker.send(onlineMessage);
+                        if (worker.getUsername() != null) {
+                            if (!username.equals(worker.getUsername())) {
+                                String msg2 = "online " + worker.getUsername() + "\n";
+                                send(msg2);
+                            }
+                        }
+                    }
+                    String onlineMsg = "online " + username + "\n";
+                    for(ServerWorker worker : workerList) {
+                        if (!username.equals(worker.getUsername())) {
+                            worker.send(onlineMsg);
+                        }
                     }
                     }catch(IOException e) {
                         e.printStackTrace();
