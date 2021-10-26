@@ -4,13 +4,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.List;
 
 public class ServerWorker extends Thread {
     public final Socket clientSocket;
-    public String username;
+    private String username;
+    private final ServerBase server;
+    private OutputStream out;
 
-    public ServerWorker(Socket clientSocket){
+    public ServerWorker(ServerBase server ,Socket clientSocket){
         this.clientSocket = clientSocket;
+        this.server = server;
     }
     @Override
     public void run() {
@@ -24,7 +28,7 @@ public class ServerWorker extends Thread {
     }
 
     public void handleClientSocket() throws IOException, InterruptedException {
-        OutputStream out = clientSocket.getOutputStream();
+        this.out = clientSocket.getOutputStream();
         InputStream in = clientSocket.getInputStream();
 
         BufferedReader bufferReader = new BufferedReader(new InputStreamReader(in));
@@ -39,13 +43,17 @@ public class ServerWorker extends Thread {
                 }else if("login".equalsIgnoreCase(ref)){
                     manageLogin(out , token);
                 }else{
-                String message = "unknown " +  ref;
-                out.write(message.getBytes());               
+                    String message = "unknown " +  ref + "\n";
+                    out.write(message.getBytes());
                 }
                 input = bufferReader.readLine();
             }
         }
         clientSocket.close();
+    }
+
+    public String getUsername(){
+        return username;
     }
 
     public void manageLogin(OutputStream out , String[] token){
@@ -59,6 +67,12 @@ public class ServerWorker extends Thread {
                     out.write(res.getBytes());
                     this.username = username;
                     System.out.println("User has logged in: " + username);
+
+                    String onlineMessage = username + " is online ";
+                    List<ServerWorker> workerList = server.getUserList();
+                    for(ServerWorker worker : workerList){
+                        worker.send(onlineMessage);
+                    }
                     }catch(IOException e) {
                         e.printStackTrace();
                     }
@@ -70,6 +84,14 @@ public class ServerWorker extends Thread {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    public void send(String onlineMessage){
+        try{
+            out.write(onlineMessage.getBytes());
+        } catch(IOException e) {
+            e.printStackTrace();
         }
     }
 }
