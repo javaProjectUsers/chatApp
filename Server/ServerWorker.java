@@ -7,6 +7,7 @@ import java.io.OutputStream;
 
 public class ServerWorker extends Thread {
     public final Socket clientSocket;
+    public String username;
 
     public ServerWorker(Socket clientSocket){
         this.clientSocket = clientSocket;
@@ -23,7 +24,7 @@ public class ServerWorker extends Thread {
     }
 
     public void handleClientSocket() throws IOException, InterruptedException {
-        OutputStream outputStream = clientSocket.getOutputStream();
+        OutputStream out = clientSocket.getOutputStream();
         InputStream in = clientSocket.getInputStream();
 
         BufferedReader bufferReader = new BufferedReader(new InputStreamReader(in));
@@ -31,18 +32,44 @@ public class ServerWorker extends Thread {
         input = bufferReader.readLine();
         while(input != null){
             String[] token = input.split(" ");
-            System.out.println(token[0]);
-            System.out.println(token.length);
             if(token != null && token.length > 0){
                 String ref = token[0];
                 if("quit".equalsIgnoreCase(ref)){
                     break;
-                }
+                }else if("login".equalsIgnoreCase(ref)){
+                    manageLogin(out , token);
+                }else{
                 String message = "unknown " +  ref;
-                outputStream.write(message.getBytes());
+                out.write(message.getBytes());               
+                }
                 input = bufferReader.readLine();
             }
         }
         clientSocket.close();
+    }
+
+    public void manageLogin(OutputStream out , String[] token){
+        if(token.length == 3){
+            String username = token[1];
+            String password = token[2];
+
+            if((username.equals("guest") && password.equals("guest")) || (username.equals("admin") && password.equals("admin"))){
+                try{
+                    String res = "logged in successfully \n";
+                    out.write(res.getBytes());
+                    this.username = username;
+                    System.out.println("User has logged in: " + username);
+                    }catch(IOException e) {
+                        e.printStackTrace();
+                    }
+            }else{
+                try{
+                String res = "username or password is incorrect \n";
+                out.write(res.getBytes());
+                } catch(IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
