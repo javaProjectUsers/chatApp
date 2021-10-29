@@ -1,4 +1,0 @@
-image: gitpod/workspace-full-vnc
-ports:
-  - port: 8818
-    onOpen: open-preview
