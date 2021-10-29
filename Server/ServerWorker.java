@@ -16,10 +16,11 @@ public class ServerWorker extends Thread {
         this.clientSocket = clientSocket;
         this.server = server;
     }
+    
     @Override
     public void run() {
         try{
-            handleClientSocket();
+            manageClientSocket();
         } catch (IOException io) {
             io.printStackTrace();
         } catch(InterruptedException ie){
@@ -27,7 +28,7 @@ public class ServerWorker extends Thread {
         }
     }
 
-    public void handleClientSocket() throws IOException, InterruptedException {
+    private void manageClientSocket() throws IOException, InterruptedException {
         this.out = clientSocket.getOutputStream();
         InputStream in = clientSocket.getInputStream();
 
@@ -38,10 +39,18 @@ public class ServerWorker extends Thread {
             String[] token = input.split(" ");
             if(token != null && token.length > 0){
                 String ref = token[0];
-                if("quit".equalsIgnoreCase(ref)){
+                if("logoff".equalsIgnoreCase(ref) || "quit".equalsIgnoreCase(ref)){
+                    manageLogoff();
                     break;
                 }else if("login".equalsIgnoreCase(ref)){
                     manageLogin(out , token);
+                }else if("msg".equalsIgnoreCase(ref)){
+                    String[] tokenMsg = input.split(" ", 3);
+                    manageMsg(tokenMsg);
+                }else if("join".equalsIgnoreCase(ref)){
+                    manageJoin(token);
+                }else if("leave".equalsIgnoreCase(ref)){
+                    manageLeave();
                 }else{
                     String message = "unknown " +  ref + "\n";
                     out.write(message.getBytes());
@@ -96,8 +105,69 @@ public class ServerWorker extends Thread {
             }
         }
     }
+    private void manageLogoff() throws IOException {
+        server.removeUser(this);
+        List<ServerWorker> workerList = server.getUserList();
+        String onlineMsg = "offline " + username + "\n";
+        for(ServerWorker worker : workerList) {
+            if (!username.equals(worker.getUsername())) {
+                worker.send(onlineMsg);
+            }
+        }
+        clientSocket.close();
+    }
+    private void manageJoin(String[] token){
+        if(token.length > 1){
+            List<ServerWorker> groupList = server.getGroupList();
+            for(ServerWorker worker : groupList){
+                if (worker.getUsername() != null) {
+                    if (!username.equals(worker.getUsername())) {
+                        String joinMsg = worker.getUsername() + " joined group" +"\n";
+                        send(joinMsg);
+                    }
+                } 
+            } 
+            server.addGroup(this);
+        }
+    }
 
-    public void send(String onlineMessage){
+    private void manageLeave() throws IOException {
+        server.removeGroup(this);
+        List<ServerWorker> groupList = server.getGroupList();
+        String removeMsg = username + "left group" + "\n";
+        for(ServerWorker worker : groupList) {
+            if (!username.equals(worker.getUsername())) {
+                worker.send(removeMsg);
+            }
+        }
+    }
+
+
+    private void manageMsg(String[] tokenMsg) throws IOException{
+        String sendTo = tokenMsg[1];
+        String msgBody =  tokenMsg[2];
+
+        boolean isgroup = sendTo.charAt(0) == '#'; 
+        if(isgroup){
+            List<ServerWorker> groupList = server.getGroupList();
+            for(ServerWorker worker : groupList) {
+                if (!username.equals(worker.getUsername())){
+                    String outMsg = "Msg from " + username + " in group --> " + msgBody + "\n";
+                    worker.send(outMsg);
+                }
+            }
+        }
+        else{
+            List<ServerWorker> workerList = server.getUserList();
+            for(ServerWorker worker : workerList) {
+                if (sendTo.equalsIgnoreCase(worker.getUsername())) {
+                    String outMsg = "Msg from " + username + " --> " + msgBody + "\n";
+                    worker.send(outMsg);
+                }
+            }
+        }
+    }
+    private void send(String onlineMessage){
         try{
             out.write(onlineMessage.getBytes());
         } catch(IOException e) {

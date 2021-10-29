@@ -9,11 +9,15 @@ import java.util.List;
 public class ServerBase extends Thread {
     public int port;
     private ArrayList<ServerWorker> userList = new ArrayList<>();
+    private ArrayList<ServerWorker> groupList = new ArrayList<>();
     public ServerBase(int port){
         this.port = port;
     }
     public List<ServerWorker> getUserList(){
         return userList;
+    }
+    public List<ServerWorker> getGroupList(){
+        return groupList;
     }
 
     @Override
@@ -31,5 +35,14 @@ public class ServerBase extends Thread {
         } catch (IOException io) {
             io.printStackTrace();
         } 
+    }
+    public void removeUser(ServerWorker serverWorker){
+        userList.remove(serverWorker);
+    }
+    public void removeGroup(ServerWorker serverWorker){
+        groupList.remove(serverWorker);
+    }
+    public void addGroup(ServerWorker serverWorker){
+        groupList.add(serverWorker);
     }
 }
