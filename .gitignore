@@ -2,4 +2,4 @@
 *$*
 *.cmd
 .vscode
-.gitpod.yml
+*.yml
