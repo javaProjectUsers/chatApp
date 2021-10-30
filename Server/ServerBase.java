@@ -34,7 +34,7 @@ public class ServerBase extends Thread {
             }
         } catch (IOException io) {
             io.printStackTrace();
-        } 
+        }
     }
     public void removeUser(ServerWorker serverWorker){
         userList.remove(serverWorker);

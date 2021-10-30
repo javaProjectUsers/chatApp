@@ -27,6 +27,7 @@ public class CreateUser extends JFrame {
   private JPasswordField passwordField;
   private JPasswordField confirmField;
   private JButton CreateUserButton;
+  private JButton LoginButton;
   private JPanel contentPane;
 
   /** * Create the frame. */
@@ -115,6 +116,22 @@ public class CreateUser extends JFrame {
 
     });
     contentPane.add(CreateUserButton);
+
+
+
+
+    LoginButton = new JButton("Already have an account?");
+    LoginButton.setFont(new Font("Tahoma", Font.PLAIN, 14));
+    LoginButton.setBounds(325, 590, 300, 25);
+    LoginButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {          // action to be performed when login button is clicked!
+        dispose();
+        UserLogin obj = new UserLogin();
+        obj.setVisible(true);
+      }
+    });
+    contentPane.add(LoginButton);
+
   }
 
   protected boolean validateUsername(String userName) throws FileNotFoundException {

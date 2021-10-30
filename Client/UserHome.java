@@ -19,6 +19,7 @@ public class UserHome extends JFrame {
 
     /** * Create the frame. */
     public UserHome(String userName) {
+
         this.setTitle("Home Screen");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(450, 190, 1014, 597);
