@@ -48,10 +48,8 @@ public class UserHome extends JFrame {
                 if (a == JOptionPane.YES_OPTION) {
                     dispose();
                     UserLogin obj = new UserLogin();
+                    obj.setVisible(true);
                 }
-                dispose();
-                UserLogin obj = new UserLogin();
-                obj.setVisible(true);
             }
         });
         contentPane.add(btnNewButton);
