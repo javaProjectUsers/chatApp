@@ -2,4 +2,6 @@ f &%& f
 ff &%& g
 fsfd &%& s
 ayush &%& ayush
-ayush &%& dd &%& a
+ayush &%& d
+d &%& a
+a &%& a
