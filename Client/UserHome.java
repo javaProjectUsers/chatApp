@@ -1,40 +1,23 @@
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.awt.GridLayout;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JList;
-import javax.swing.UIManager;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JTextField;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+
 import java.io.*;
+import java.net.Socket;
 
 
 public class UserHome extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
-    private JTextField input;
-    private DefaultListModel<String> listModel = new DefaultListModel<>();
-    private JList<String> msgs = new JList<>(listModel);
-    private OutputStream serverOut;
 
 
     /** * Create the frame. */
-    public UserHome(String userName) {
-
+    public UserHome(String userName, Socket socket) throws IOException{
 
         setTitle("Home Screen");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -63,25 +46,31 @@ public class UserHome extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int a = JOptionPane.showConfirmDialog(LogoutButton, "Are you sure?");
                 if (a == JOptionPane.YES_OPTION) {
+                    try {
+                        System.out.println("requesting logout");
+                        socket.getOutputStream().write("logout\n".getBytes());
+                    } catch (IOException e1) {e1.printStackTrace();}
                     dispose();
-                    UserLogin obj = new UserLogin();
+                    UserLogin obj = new UserLogin(socket);
                     obj.setVisible(true);
                 }
             }
         });
         contentPane.add(LogoutButton);
 
-        UserListPanel container = new UserListPanel();
-        container.add(new JLabel("1"));
-        container.setBackground(Color.CYAN);
-        container.setBounds(0,100,300,500);
-        this.add(container);
-        container.setLayout(null);
+        // Below container will keep the record of all the available users !
+
+        try {
+            UserListPanel container;
+            container = new UserListPanel(userName,socket);
+            container.setBackground(Color.CYAN);
+            container.setBounds(0,100,300,500);
+            this.add(container);
+            container.setLayout(null);
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
+        }
 
     }
 
-    public void msg(String sendTo, String msgBody) throws IOException {
-        String cmd = "msg " + sendTo + " " + msgBody + "\n";
-        serverOut.write(cmd.getBytes());
-    }
 }

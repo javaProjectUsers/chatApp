@@ -1,23 +1,12 @@
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.HeadlessException;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.net.Socket;
 import java.util.Scanner;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 public class CreateUser extends JFrame {
@@ -31,7 +20,7 @@ public class CreateUser extends JFrame {
   private JPanel contentPane;
 
   /** * Create the frame. */
-  public CreateUser() {
+  public CreateUser(Socket socket) {
 
     this.setTitle("Create New Account");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -97,12 +86,14 @@ public class CreateUser extends JFrame {
         try {
           if (validateUsername(userName)) {
             JOptionPane.showMessageDialog(CreateUserButton, "Username already exists");
+          } else if (userName.split(" ").length > 1) {
+            JOptionPane.showMessageDialog(CreateUserButton, "Username can not contain spaces");
           } else if (!pass.equalsIgnoreCase(confirm)) {
             JOptionPane.showMessageDialog(CreateUserButton, "Passwords does not match");
           } else {
             createUser(userName, pass);
             dispose();
-            UserLogin obj = new UserLogin();
+            UserLogin obj = new UserLogin(socket);
             obj.setUsername(userName);
             obj.setPassword(pass);
             obj.setVisible(true);
@@ -118,15 +109,13 @@ public class CreateUser extends JFrame {
     contentPane.add(CreateUserButton);
 
 
-
-
     LoginButton = new JButton("Already have an account?");
     LoginButton.setFont(new Font("Tahoma", Font.PLAIN, 14));
     LoginButton.setBounds(325, 590, 300, 25);
     LoginButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {          // action to be performed when login button is clicked!
         dispose();
-        UserLogin obj = new UserLogin();
+        UserLogin obj = new UserLogin(socket);
         obj.setVisible(true);
       }
     });

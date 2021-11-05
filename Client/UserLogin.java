@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.Socket;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -20,7 +22,6 @@ import java.util.Scanner;
 
 public class UserLogin extends JFrame {
 
-    private static final long serialVersionUID = 1L;
     private JTextField textField;
     private JPasswordField passwordField;
     private JButton LoginButton;
@@ -36,7 +37,7 @@ public class UserLogin extends JFrame {
     }
 
     // Create the frame //
-    public UserLogin() {
+    public UserLogin(Socket socket) {
         this.setTitle("Login Page");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(450, 190, 1014, 650);
@@ -87,14 +88,16 @@ public class UserLogin extends JFrame {
                 try {
                     if ( auth(userName,password) ) {
                         dispose();
-                        UserHome ah = new UserHome(userName);
+                        String cmd = "login " + userName + " " + password + "\n";
+                        socket.getOutputStream().write(cmd.getBytes());
+                        UserHome ah = new UserHome(userName, socket);
                         ah.setVisible(true);
                         JOptionPane.showMessageDialog(LoginButton, "You have successfully logged in");
                         System.out.println(userName + " Logged in..");
                     } else {
                         JOptionPane.showMessageDialog(LoginButton, "Wrong Username & Password");
                     }
-                } catch (HeadlessException | FileNotFoundException e1) {
+                } catch (HeadlessException | IOException e1) {
                     e1.printStackTrace();
                 }
             }
@@ -107,7 +110,7 @@ public class UserLogin extends JFrame {
         CreateButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                CreateUser newUser = new CreateUser();
+                CreateUser newUser = new CreateUser(socket);
                 newUser.setVisible(true);
             }
         });

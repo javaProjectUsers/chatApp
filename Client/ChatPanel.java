@@ -1,47 +1,58 @@
-import java.awt.Adjustable;
-import java.awt.Color;
-import java.awt.Font;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.Socket;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.io.IOException;
-import java.io.OutputStream;
-
-
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 
 
 public class ChatPanel extends JPanel {
 
-    private static final long serialVersionUID = 1L;
     private JTextField input;
     private DefaultListModel<String> listModel = new DefaultListModel<>();
     private JList<String> msgs = new JList<>(listModel);
-    private OutputStream serverOut;
+    public String SelectedUser;
+    private JLabel lbl;
+
+    public OutputStream out;
+    public InputStream in;
+
+    private BufferedReader BufferIn;
 
 
-    public ChatPanel(String username) {
 
+    public ChatPanel(Socket socket) throws IOException {
+
+        out = socket.getOutputStream();
+        in = socket.getInputStream();
+        BufferIn = new BufferedReader(new InputStreamReader(in));
+
+        lbl = new JLabel("Not Connected...");
+        lbl.setForeground(Color.CYAN);
+        lbl.setFont(new Font("Tahoma", Font.BOLD, 15));
+        lbl.setBounds(50, 30, 250, 20);
+        this.add(lbl);
 
         JScrollPane sp = new JScrollPane(msgs, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        sp.setBounds(30, 50, 600, 250);;
+        sp.setBounds(40, 65, 600, 250);;
         add(sp);
+        listModel.addElement("Not Connected with any User...");
+        listModel.addElement("Select any user from available users list to start Chatting..");
 
         input = new JTextField();
         input.setFont(new Font("Tahoma", Font.PLAIN, 14));
         input.setBounds(50, 350, 450, 30);
-        input.addActionListener(new ActionListener(){
+        input.addActionListener((ActionListener) new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String text = input.getText();
-                listModel.addElement( "You : " + text);
+                listModel.addElement( "You: " + text);
+                sendMsg(text);
                 input.setText("");
 				sp.getVerticalScrollBar().setValue(sp.getVerticalScrollBar().getMaximum());
 			}
@@ -57,18 +68,59 @@ public class ChatPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
                 String text = input.getText();
-                listModel.addElement("You : " + text);
+                listModel.addElement("You: " + text);
+                sendMsg(text);
                 input.setText("");
                 sp.getVerticalScrollBar().setValue(sp.getVerticalScrollBar().getMaximum());
 			}
         });
         add(sendBtn);
-        
+
+        StartMessageReader();
     }
 
-    public void msg(String sendTo, String msgBody) throws IOException {
-        String cmd = "msg " + sendTo + " " + msgBody + "\n";
-        serverOut.write(cmd.getBytes());
+    // following function will help to create and edit the chat panel properties!
+    public void CreateNewPanel(String newSelectedUser){
+        this.SelectedUser = newSelectedUser;
+        listModel.clear();
+        listModel.addElement("Successfully Connected with " + SelectedUser);
+        lbl.setText("Connected with: " + SelectedUser);
+    }
+
+    public void sendMsg(String txt){
+        String cmd = "msg " + SelectedUser + " " + txt + "\n";
+        System.out.println("sending msg to " + SelectedUser + ": " + txt);
+        try {
+            this.out.write(cmd.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void StartMessageReader(){
+        Thread t = new Thread(){
+            @Override
+            public void run(){
+                readMessageLoop();
+            }
+        };
+        t.start();
+    }
+
+    private void readMessageLoop(){
+        try {
+            String line;
+            while((line = BufferIn.readLine())!=null){
+                String[] tokens = line.split(" ", 3);
+                if("msg".equalsIgnoreCase(tokens[0])){
+                    listModel.addElement("From "+tokens[1]+": "+tokens[2]);
+                }
+                System.out.println(line);        
+            }
+        } catch (IOException e) {
+            System.out.println("chatPanel.java: connection lost");
+            e.printStackTrace();
+        }
     }
 
 }
