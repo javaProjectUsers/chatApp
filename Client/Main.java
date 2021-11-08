@@ -1,17 +1,11 @@
-import java.awt.EventQueue;
+import java.io.IOException;
 
 public class Main {
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    UserLogin frame = new UserLogin();
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        System.out.println("Client UI started...");
+    public static void main(String[] args) throws IOException {
+
+        int port = 8818;
+        Connect2Server instance = new Connect2Server(port);
+        instance.connection = true;
+
     }
 }
