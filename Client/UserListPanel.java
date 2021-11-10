@@ -17,6 +17,7 @@ public class UserListPanel extends JPanel {
     public DefaultListModel<String> listModel = new DefaultListModel<String>();
     public JList<String> users = new JList<String>(listModel);
     public String myUsername;
+    public Thread t;
 
     private String otherUser;
 
@@ -54,7 +55,7 @@ public class UserListPanel extends JPanel {
         this.add(chatPanel);
         chatPanel.setLayout(null);
         
-        new Thread() {
+        t = new Thread() {
             @Override
             public void run() {
                 while(true){
@@ -65,9 +66,8 @@ public class UserListPanel extends JPanel {
                     }
                 }
             }
-        }.start();
-
-
+        };
+        t.start();
     }
 
     public void refreshList() throws InterruptedException, FileNotFoundException{
@@ -78,8 +78,9 @@ public class UserListPanel extends JPanel {
             while (sc.hasNextLine()){
                 String token = sc.nextLine();
                 // System.out.println(token+" mu:"+myUsername);
-                if(!token.equalsIgnoreCase(myUsername)){
+                if(!token.equalsIgnoreCase(myUsername) && token.toString() != myUsername.toString()){
                     userList.add(token);
+                    System.out.println(token + " " + myUsername);
                     // listModel.addElement(token);
                 }
             }

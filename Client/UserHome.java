@@ -14,6 +14,7 @@ public class UserHome extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
+    public  UserListPanel container;
 
 
     /** * Create the frame. */
@@ -51,6 +52,10 @@ public class UserHome extends JFrame {
                         socket.getOutputStream().write("logout\n".getBytes());
                     } catch (IOException e1) {e1.printStackTrace();}
                     dispose();
+                    container.t = null;
+                    container.myUsername = null;
+                    container = null;
+                    System.gc();
                     UserLogin obj = new UserLogin(socket);
                     obj.setVisible(true);
                 }
@@ -61,7 +66,6 @@ public class UserHome extends JFrame {
         // Below container will keep the record of all the available users !
 
         try {
-            UserListPanel container;
             container = new UserListPanel(userName,socket);
             container.setBackground(new Color(154,142,149));
             container.setBounds(0,100,300,500);

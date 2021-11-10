@@ -91,6 +91,7 @@ public class UserLogin extends JFrame {
                         String cmd = "login " + userName + " " + password + "\n";
                         socket.getOutputStream().write(cmd.getBytes());
                         UserHome ah = new UserHome(userName, socket);
+                        ah.container.myUsername = userName;
                         ah.setVisible(true);
                         JOptionPane.showMessageDialog(LoginButton, "You have successfully logged in");
                         System.out.println(userName + " Logged in..");
