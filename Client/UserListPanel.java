@@ -40,14 +40,14 @@ public class UserListPanel extends JPanel {
             String selectedUser = userList.getSelectedItem();
             System.out.println("clicked: " + selectedUser);
 
-         //  We will create a new chat Panel every time the user wants to chat with someone else            
-            otherUser = selectedUser;
-            chatPanel.CreateNewPanel(otherUser);
+         //  We will create a new chat Panel every time the user wants to chat with someone else   
+            if(selectedUser != null){         
+                otherUser = selectedUser;
+                chatPanel.CreateNewPanel(otherUser);
+            }
         });
         add(userList);
 
-
-        //  We will create a new chat Panel every time the user wants to chat with someone else
         chatPanel = new ChatPanel(socket);
         chatPanel.setBackground(Color.LIGHT_GRAY);
         chatPanel.setBounds(300,100,800,500);

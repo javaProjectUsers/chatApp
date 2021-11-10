@@ -1,0 +1,2 @@
+javac -d ./Server/exec/ ./Server/*.java
+java -cp Server/exec/ Main 
