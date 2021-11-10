@@ -80,7 +80,7 @@ public class UserListPanel extends JPanel {
                 // System.out.println(token+" mu:"+myUsername);
                 if(!token.equalsIgnoreCase(myUsername) && token.toString() != myUsername.toString()){
                     userList.add(token);
-                    System.out.println(token + " " + myUsername);
+                    // System.out.println(token + " " + myUsername);
                     // listModel.addElement(token);
                 }
             }

@@ -13,9 +13,7 @@ public class Connect2Server {
 
         this.serverPort = port;
 
-        if(!connect()){
-            System.out.println("connection with server failed...");
-        } else {
+        if(connect()){
             EventQueue.invokeLater(new Runnable() {
                 public void run() {
                     try {
@@ -26,6 +24,8 @@ public class Connect2Server {
                     }
                 }
             });
+        } else {
+            System.out.println("connection with server failed...");
         }
     }
 
