@@ -63,7 +63,7 @@ public class UserHome extends JFrame {
         try {
             UserListPanel container;
             container = new UserListPanel(userName,socket);
-            container.setBackground(Color.CYAN);
+            container.setBackground(new Color(154,142,149));
             container.setBounds(0,100,300,500);
             this.add(container);
             container.setLayout(null);
