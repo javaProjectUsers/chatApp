@@ -49,7 +49,7 @@ public class UserListPanel extends JPanel {
 
         //  We will create a new chat Panel every time the user wants to chat with someone else
         chatPanel = new ChatPanel(socket);
-        chatPanel.setBackground(Color.RED);
+        chatPanel.setBackground(Color.LIGHT_GRAY);
         chatPanel.setBounds(300,100,800,500);
         this.add(chatPanel);
         chatPanel.setLayout(null);

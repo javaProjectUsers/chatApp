@@ -33,7 +33,7 @@ public class ChatPanel extends JPanel {
         BufferIn = new BufferedReader(new InputStreamReader(in));
 
         lbl = new JLabel("Not Connected...");
-        lbl.setForeground(Color.CYAN);
+        lbl.setForeground(new Color(102,51,0));
         lbl.setFont(new Font("Tahoma", Font.BOLD, 15));
         lbl.setBounds(50, 30, 250, 20);
         this.add(lbl);
@@ -61,7 +61,7 @@ public class ChatPanel extends JPanel {
 
         JButton sendBtn = new JButton("Send");
         sendBtn.setForeground(new Color(0, 0, 0));
-        sendBtn.setBackground(Color.CYAN);
+        sendBtn.setBackground(new Color(8,120,81));
         sendBtn.setFont(new Font("Tahoma", Font.BOLD, 14));
         sendBtn.setBounds(550, 350, 100, 30);
         sendBtn.addActionListener((ActionListener) new ActionListener() {
