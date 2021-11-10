@@ -38,10 +38,6 @@ public class ServerBase extends Thread {
             io.printStackTrace();
         }
     }
-    public void removeUser(ServerWorker serverWorker){
-        userList.remove(serverWorker);
-    }
-
     private class EditUsersListFile extends Thread {
         @Override
         public void run() {
