@@ -50,11 +50,7 @@ public class ServerWorker extends Thread {
                 }else if("msg".equalsIgnoreCase(ref)){
                     String[] tokenMsg = input.split(" ", 3);
                     manageMsg(tokenMsg);
-                }else if("join".equalsIgnoreCase(ref)){
-                    manageJoin(token);
-                }else if("leave".equalsIgnoreCase(ref)){
-                    manageLeave();
-                }else{
+                } else {
                     String message = "unknown " +  ref + "\n";
                     System.out.println("serverworker.java: "+message);
                     out.write(message.getBytes());
@@ -73,29 +69,11 @@ public class ServerWorker extends Thread {
         if(token.length == 3){
             String username = token[1];
             // String password = token[2];
-
             try{
                 String res = "logged in successfully\n";
                 out.write(res.getBytes());
                 this.username = username;
                 System.out.println("User has logged in: " + username);
-
-                // List<ServerWorker> workerList = server.getUserList();
-                // for(ServerWorker worker : workerList){
-                //     if (worker.getUsername() != null) {
-                //         if (!username.equals(worker.getUsername())) {
-                //             String msg2 = "online " + worker.getUsername() + "\n";
-                //             send(msg2);
-                //         }
-                //     }
-                // }
-                // String onlineMsg = "online " + username + "\n";
-                // for(ServerWorker worker : workerList) {
-                //     if (!username.equals(worker.getUsername())) {
-                //         worker.send(onlineMsg);
-                //     }
-                // }
-
             } catch(IOException e) {
                 e.printStackTrace();
             }
@@ -103,41 +81,8 @@ public class ServerWorker extends Thread {
     }
 
     private void manageLogoff() throws IOException {
-        // List<ServerWorker> workerList = server.getUserList();
-        // String onlineMsg = "offline " + username + "\n";
-        // for(ServerWorker worker : workerList) {
-        //     if (!username.equals(worker.getUsername())) {
-        //         worker.send(onlineMsg);
-        //     }
-        // }
         System.out.println("logout called");
         username = null;
-    }
-
-    private void manageJoin(String[] token){
-        if(token.length > 1){
-            List<ServerWorker> groupList = server.getGroupList();
-            for(ServerWorker worker : groupList){
-                if (worker.getUsername() != null) {
-                    if (!username.equals(worker.getUsername())) {
-                        String joinMsg = worker.getUsername() + " joined group" +"\n";
-                        send(joinMsg);
-                    }
-                } 
-            } 
-            server.addGroup(this);
-        }
-    }
-
-    private void manageLeave() throws IOException {
-        server.removeGroup(this);
-        List<ServerWorker> groupList = server.getGroupList();
-        String removeMsg = username + "left group" + "\n";
-        for(ServerWorker worker : groupList) {
-            if (!username.equals(worker.getUsername())) {
-                worker.send(removeMsg);
-            }
-        }
     }
 
 
@@ -145,23 +90,11 @@ public class ServerWorker extends Thread {
         String sendTo = tokenMsg[1];
         String msgBody =  tokenMsg[2];
 
-        boolean isgroup = sendTo.charAt(0) == '#'; 
-        if(isgroup){
-            List<ServerWorker> groupList = server.getGroupList();
-            for(ServerWorker worker : groupList) {
-                if (!username.equals(worker.getUsername())){
-                    String outMsg = "msgGroup " + username + msgBody + "\n";
-                    worker.send(outMsg);
-                }
-            }
-        }
-        else{
-            List<ServerWorker> workerList = server.getUserList();
-            for(ServerWorker worker : workerList) {
-                if (sendTo.equalsIgnoreCase(worker.getUsername())) {
-                    String outMsg = "msg " + username + " " + msgBody + "\n";
-                    worker.send(outMsg);
-                }
+        List<ServerWorker> workerList = server.getUserList();
+        for(ServerWorker worker : workerList) {
+            if (sendTo.equalsIgnoreCase(worker.getUsername())) {
+                String outMsg = "msg " + username + " " + msgBody + "\n";
+                worker.send(outMsg);
             }
         }
     }

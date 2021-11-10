@@ -17,9 +17,6 @@ public class ServerBase extends Thread {
     public List<ServerWorker> getUserList(){
         return userList;
     }
-    public List<ServerWorker> getGroupList(){
-        return groupList;
-    }
 
     @Override
     public void run(){
@@ -43,12 +40,6 @@ public class ServerBase extends Thread {
     }
     public void removeUser(ServerWorker serverWorker){
         userList.remove(serverWorker);
-    }
-    public void removeGroup(ServerWorker serverWorker){
-        groupList.remove(serverWorker);
-    }
-    public void addGroup(ServerWorker serverWorker){
-        groupList.add(serverWorker);
     }
 
     private class EditUsersListFile extends Thread {
