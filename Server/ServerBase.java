@@ -9,12 +9,12 @@ import java.util.List;
 
 public class ServerBase extends Thread {
     public int port;
-    private ArrayList<ServerWorker> userList = new ArrayList<>();
+    private ArrayList<UserThread> userList = new ArrayList<>();
 
     public ServerBase(int port){
         this.port = port;
     }
-    public List<ServerWorker> getUserList(){
+    public List<UserThread> getUserList(){
         return userList;
     }
 
@@ -28,9 +28,9 @@ public class ServerBase extends Thread {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("connection accepted...");
-                ServerWorker worker = new ServerWorker(this,clientSocket);
-                userList.add(worker);
-                worker.start();
+                UserThread thread = new UserThread(this,clientSocket);
+                userList.add(thread);
+                thread.start();
                 // serverSocket.close();
             }
         } catch (IOException io) {
@@ -55,9 +55,9 @@ public class ServerBase extends Thread {
                 FileWriter fw = new FileWriter("availableUsersList.txt");
                 PrintWriter addUser = new PrintWriter(fw);
                 ArrayList<String> ArrList = new ArrayList<String>();
-                for(ServerWorker worker : userList){
-                    if ( worker.isAlive() &&  worker.getUsername() != null) {
-                        ArrList.add(worker.getUsername());
+                for(UserThread thread : userList){
+                    if ( thread.isAlive() &&  thread.getUsername() != null) {
+                        ArrList.add(thread.getUsername());
                     }
                     // System.out.println(worker.getUsername());
                 }

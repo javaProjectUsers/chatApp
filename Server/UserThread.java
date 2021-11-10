@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.List;
 
-public class ServerWorker extends Thread {
+public class UserThread extends Thread {
 
     public final Socket clientSocket;
     public String username = null;
@@ -14,7 +14,7 @@ public class ServerWorker extends Thread {
     private OutputStream out;
     private InputStream in;
 
-    public ServerWorker(ServerBase server ,Socket clientSocket){
+    public UserThread(ServerBase server ,Socket clientSocket){
         this.clientSocket = clientSocket;
         this.server = server;
     }
@@ -90,11 +90,11 @@ public class ServerWorker extends Thread {
         String sendTo = tokenMsg[1];
         String msgBody =  tokenMsg[2];
 
-        List<ServerWorker> workerList = server.getUserList();
-        for(ServerWorker worker : workerList) {
-            if (sendTo.equalsIgnoreCase(worker.getUsername())) {
+        List<UserThread> threadList = server.getUserList();
+        for(UserThread thread : threadList) {
+            if (sendTo.equalsIgnoreCase(thread.getUsername())) {
                 String outMsg = "msg " + username + " " + msgBody + "\n";
-                worker.send(outMsg);
+                thread.send(outMsg);
             }
         }
     }
