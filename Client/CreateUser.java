@@ -90,6 +90,10 @@ public class CreateUser extends JFrame {
             JOptionPane.showMessageDialog(CreateUserButton, "Username can not contain spaces");
           } else if (!pass.equalsIgnoreCase(confirm)) {
             JOptionPane.showMessageDialog(CreateUserButton, "Passwords does not match");
+          } else if(pass.split(" ").length > 1){
+            JOptionPane.showMessageDialog(CreateUserButton, "Password can not contain spaces");
+          } else if(pass.equalsIgnoreCase("")){
+            JOptionPane.showMessageDialog(CreateUserButton, "Password can not be an empty string");
           } else {
             createUser(userName, pass);
             dispose();
