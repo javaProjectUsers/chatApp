@@ -10,7 +10,7 @@ import java.util.List;
 public class ServerBase extends Thread {
     public int port;
     private ArrayList<ServerWorker> userList = new ArrayList<>();
-    private ArrayList<ServerWorker> groupList = new ArrayList<>();
+
     public ServerBase(int port){
         this.port = port;
     }
