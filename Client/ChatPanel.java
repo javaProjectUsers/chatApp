@@ -16,14 +16,13 @@ public class ChatPanel extends JPanel {
     private JTextField input;
     private DefaultListModel<String> listModel = new DefaultListModel<>();
     private JList<String> msgs = new JList<>(listModel);
-    public String SelectedUser;
     private JLabel lbl;
-
+    private BufferedReader BufferIn;
+    private JScrollPane sp;
+    
     public OutputStream out;
     public InputStream in;
-
-    private BufferedReader BufferIn;
-
+    public String SelectedUser;
 
 
     public ChatPanel(Socket socket) throws IOException {
@@ -45,7 +44,7 @@ public class ChatPanel extends JPanel {
         lbl.setBounds(50, 350, 250, 20);
         this.add(lbl);
 
-        JScrollPane sp = new JScrollPane(msgs, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        sp = new JScrollPane(msgs, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         sp.setBounds(40, 65, 600, 250);;
         add(sp);
 
@@ -55,20 +54,7 @@ public class ChatPanel extends JPanel {
         input = new JTextField();
         input.setFont(new Font("Tahoma", Font.PLAIN, 14));
         input.setBounds(50, 380, 450, 30);
-        input.addActionListener((ActionListener) new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String text = input.getText();
-                if(SelectedUser == null){
-                    JOptionPane.showMessageDialog(input, "Message not sent! First select a user from the users list.");
-                } else {
-                    listModel.addElement("You (To "+ SelectedUser +"): " + text);
-                    sendMsg(text);
-                    input.setText("");
-                }
-				sp.getVerticalScrollBar().setValue(sp.getVerticalScrollBar().getMaximum());
-			}
-        });
+        input.addActionListener((ActionListener) onClickSend);
         add(input);        
 
         JButton sendBtn = new JButton("Send");
@@ -76,20 +62,7 @@ public class ChatPanel extends JPanel {
         sendBtn.setBackground(new Color(8,120,81));
         sendBtn.setFont(new Font("Tahoma", Font.BOLD, 14));
         sendBtn.setBounds(550, 380, 100, 30);
-        sendBtn.addActionListener((ActionListener) new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-                String text = input.getText();
-                if(SelectedUser == null){
-                    JOptionPane.showMessageDialog(input, "Message not sent! First select a user from the users list.");
-                } else {
-                    listModel.addElement("You (To "+ SelectedUser +"): " + text);
-                    sendMsg(text);
-                    input.setText("");
-                }
-                sp.getVerticalScrollBar().setValue(sp.getVerticalScrollBar().getMaximum());
-			}
-        });
+        sendBtn.addActionListener((ActionListener) onClickSend);
         add(sendBtn);
 
         StartMessageReader();
@@ -102,6 +75,22 @@ public class ChatPanel extends JPanel {
         listModel.addElement("You can now send messages to " + SelectedUser);
         lbl.setText("Send a Message to: " + SelectedUser);
     }
+
+    public ActionListener onClickSend = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String text = input.getText();
+            if(SelectedUser == null){
+                JOptionPane.showMessageDialog(input, "Message not sent! First select a user from the users list.");
+            } else {
+                listModel.addElement("You (To "+ SelectedUser +"): " + text);
+                sendMsg(text);
+                input.setText("");
+            }
+            sp.getVerticalScrollBar().setValue(sp.getVerticalScrollBar().getMaximum());
+        };
+    };
+
 
     public void sendMsg(String txt){
         String cmd = "msg " + SelectedUser + " " + txt + "\n";
