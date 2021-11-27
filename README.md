@@ -19,7 +19,7 @@ To run on Linux
     bash clientRun           - to run and execute chat client
 ```
 
-To run Windows
+To run on Windows
 (in home directory)  - **Rename the serverRun file to serverRun.cmd and clientRun file to clientRun.cmd**
 Run the following commands in your terminal:
 
