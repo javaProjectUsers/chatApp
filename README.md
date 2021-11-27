@@ -19,6 +19,19 @@ To run on Linux
     bash clientRun           - to run and execute chat client
 ```
 
+To run Windows
+(in home directory)  - **Rename the serverRun file to serverRun.cmd and clientRun file to clientRun.cmd**
+Run the following commands in your terminal:
+
+```
+    ./serverRun.cmd          - to run and execute chat server
+```
+```
+    ./clientRun.cmd           - to run and execute chat client
+```
+
+
+
 # Team Notes:
     Create all your java classes (files) in the designated place do not compile them on your own 
     instead use above scripting commands for compiling and executing so that codebase remain clean!
